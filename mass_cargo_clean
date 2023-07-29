@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# This is a shell script that does the EXACT thing the go program does that I wrote in a fraction
+# of the time (and it's parallelized!)
+# Shell scripts really are the right tool for a job like this.
+
+clean_it () {
+  local dir=$1
+  local lines=$(find $dir -mindepth 1 -maxdepth 1 -name 'Cargo.toml' -o -name 'target' | wc -l)
+  if [ $lines -eq 2 ]; then
+    cd $dir
+    cargo clean
+    cd ..
+  fi
+}
+export -f clean_it
+
+exa -1 . | parallel clean_it
